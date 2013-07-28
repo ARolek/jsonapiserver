@@ -19,10 +19,9 @@ go run main.go
 
 Use telnet to connect to the server on port 8888. Send JSON data to the server and it will echo the request.
 
-### Config
-Edit main.go
+### Command Line Parameters
 
-- PORT : local port to bind to
+--port : local port to bind to
 
 ### Why
 I was working with reading net.Conn incoming data into buffers, but I did't like the fixed buffer size requirement. In order to accommodate varios sized requests, the buffer had to be large and required trimming before being passed to json.UnMarshal().
