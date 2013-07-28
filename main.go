@@ -2,13 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"log"
 	"net"
 )
 
-const (
-	PORT = "8888"
-)
+var port = flag.String("port", "8888", "port to connect to")
 
 type Client struct {
 	Conn net.Conn
@@ -17,12 +16,14 @@ type Client struct {
 }
 
 func main() {
-	ln, err := net.Listen("tcp", ":"+PORT)
+	flag.Parse()
+
+	ln, err := net.Listen("tcp", ":"+*port)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Println("Listening on localhost:" + PORT)
+	log.Println("Listening on localhost:" + *port)
 
 	for {
 		conn, err := ln.Accept()
