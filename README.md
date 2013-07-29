@@ -1,4 +1,4 @@
-### Concurrent JSON API Server
+### Concurrent JSON API Server base
 A simple concurrent JSON API server base in GO. This is not a webserver.
 
 ### Summary 
@@ -26,7 +26,7 @@ Use telnet to connect to the server on port 8888 (or the port set using the --po
 ### Why
 I was working with reading net.Conn incoming data into buffers, but I did't like the fixed buffer size requirement. In order to accommodate varios sized requests, the buffer had to be large and required trimming before being passed to json.UnMarshal().
 
-In order to know that a network request is complete we need to [frame](http://en.wikipedia.org/wiki/Frame_(networking) it. JSON provides framing, allowing we can pass net.Conn into a json.Decoder and simply call Decode(). Leveraging go routines, we get a clean and concurrent JSON API server base to work from.
+In order to know that a request is complete we need a [frame](http://en.wikipedia.org/wiki/Frame_(networking\)). JSON provides framing, allowing us to pass net.Conn into a json.Decoder and then simply call Decode(). Leveraging go routines, we get a clean and concurrent JSON API server base to work from.
 
 ### Questions / Feedback
 [@alexrolek](https://twitter.com/alexrolek)
