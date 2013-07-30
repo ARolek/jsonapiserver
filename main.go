@@ -31,18 +31,19 @@ func main() {
 			log.Println(err.Error())
 			break
 		}
-		client := Client{
-			Conn: conn,
-		}
+
 		//	create a new go routine for each connection
-		go handleConnection(client)
+		go handleConnection(conn)
 	}
 }
 
-//	we have a connection, now listen for incoming json data
-func handleConnection(client Client) {
-	dec := json.NewDecoder(client.Conn)
+//	we have a connection, now listen for incoming JSON data
+func handleConnection(conn net.Conn) {
+	dec := json.NewDecoder(conn)
 	for {
+		client := Client{
+			Conn: conn,
+		}
 		err := dec.Decode(&client.Req)
 		if err != nil {
 			client.Res = map[string]interface{}{
@@ -50,6 +51,11 @@ func handleConnection(client Client) {
 			}
 			go handleResponse(client)
 			break
+		}
+
+		//	use reqId
+		if _, ok := client.Req["reqId"]; !ok {
+
 		}
 
 		//	create a new go routine for each request on this connection
