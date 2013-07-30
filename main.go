@@ -53,11 +53,6 @@ func handleConnection(conn net.Conn) {
 			break
 		}
 
-		//	use reqId
-		if _, ok := client.Req["reqId"]; !ok {
-
-		}
-
 		//	create a new go routine for each request on this connection
 		go handleRequest(client)
 	}
