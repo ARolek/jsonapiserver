@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
 	"log"
@@ -39,23 +40,38 @@ func main() {
 
 //	we have a connection, now listen for incoming JSON data
 func handleConnection(conn net.Conn) {
-	dec := json.NewDecoder(conn)
-	for {
+	scanner := bufio.NewScanner(conn)
+
+	for scanner.Scan() {
 		client := Client{
 			Conn: conn,
 		}
-		err := dec.Decode(&client.Req)
+
+		var reqData map[string]interface{}
+
+		err := json.Unmarshal(scanner.Bytes(), &reqData)
 		if err != nil {
+			log.Println(err)
 			client.Res = map[string]interface{}{
-				"error": err.Error(),
+				"success": false,
+				"error":   "JSON decode fail - " + err.Error(),
 			}
 			go handleResponse(client)
-			break
+			continue
 		}
 
-		//	use reqId
-		if _, ok := client.Req["reqId"]; !ok {
+		//	add our decoded JSON data to our client struct
+		client.Req = reqData
 
+		//	check for a reqId. this is how the client knows what response
+		//	goes with what request
+		if client.Req["reqId"] == "" || client.Req["reqId"] == nil {
+			client.Res = map[string]interface{}{
+				"success": false,
+				"error":   "reqId not provided",
+			}
+			go handleResponse(client)
+			continue
 		}
 
 		//	create a new go routine for each request on this connection
